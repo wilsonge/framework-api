@@ -37,12 +37,20 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 	use ContainerAwareTrait, DispatcherAwareTrait;
 
 	/**
-	 * The Content Negotiation object
+	 * The default content types for the Open API routes
 	 *
-	 * @var   Negotiator|null
-	 * @since 1.0
+	 * @var    array
+	 * @since  1.0
 	 */
-	protected $negotiator = null;
+	protected $defaultContentType = null;
+
+	/**
+	 * Mapping of Open API paths to the produced content type as an array
+	 *
+	 * @var    array
+	 * @since  1.0
+	 */
+	protected $contentTypeMapping = null;
 
 	/**
 	 * Status codes translation table.
@@ -140,7 +148,6 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 		$this->setContainer($container);
 		$this->setLogger($container->get('Psr\\Log\\LoggerInterface'));
 		$this->setDispatcher($container->get('Joomla\\Event\\Dispatcher'));
-		$this->negotiator = new Negotiator;
 	}
 
 	/**
@@ -211,14 +218,19 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 			throw new \RuntimeException('Invalid Open API File', 500);
 		}
 
+		$this->defaultContentType = $swaggerJson['produces'];
+
 		foreach ($swaggerJson['paths'] as $url => $operations)
 		{
 			foreach ($operations as $httpMethod => $operation)
 			{
-				$uniqueName = $url . strtoupper($httpMethod);
+				if (isset($operation['produces']))
+				{
+					$this->contentTypeMapping[$operation['operationId']] = $operation['produces'];
+				}
 
 				$routes->add(
-					$uniqueName,
+					$operation['operationId'],
 					new Route(
 						$swaggerJson['basePath'] . $url,
 						array(
@@ -296,22 +308,35 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 			throw new \InvalidArgumentException(self::$statusTexts[500], 500, $e);
 		}
 
+		$operationId = $routerResult['controller'];
+
+		/**
+		 * We only set the controller variable so we knew which controller to boot. We don't want this set into the
+		 * input later on
+		 */
+		unset($routerResult['controller']);
+
 		// Check the accept header matches the expected format for this match
 		$acceptHeader = $this->input->server->getString('HTTP_ACCEPT', null);
 
 		if ($acceptHeader)
 		{
-			// TODO: Get these priorities from the open api file
-			$priorities   = array('application/json');
+			if (isset($this->contentTypeMapping[$operationId]))
+			{
+				$priorities = $this->contentTypeMapping[$operationId];
+			}
+			else
+			{
+				$priorities = $this->defaultContentType;
+			}
 
-			$mediaType = $this->negotiator->getBest($acceptHeader, $priorities);
+			$mediaType = (new Negotiator())->getBest($acceptHeader, $priorities);
 
-			// If we have a null media type then we couldn't find a matching content type - so the correct result is a 404
-			if (is_null($mediaType))
+			if ($mediaType === null)
 			{
 				$this->getLogger()->warning(
 					sprintf(
-						'User supplied accept header of %s, but endpoint only accepts %s',
+						'(Invalid Media Type) User supplied accept header of %s, but endpoint only accepts %s',
 						$acceptHeader,
 						implode(',', $priorities)
 					)
@@ -320,13 +345,13 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 				throw new \InvalidArgumentException(self::$statusTexts[404], 404);
 			}
 
+			// First of all we set the media type with a utf-8 charset (default). Then we try and find a charset match
 			/** @var \Negotiation\BaseAccept $mediaType */
-			$value = $mediaType->getValue();
+			$this->mimeType = $mediaType->getType();
 		}
 
 		// Retrieve the controller path. Try and assemble it into a namespace class to search
-		$controllerPath = $routerResult['controller'];
-		$controllerPieces = explode('.', $controllerPath);
+		$controllerPieces = explode('.', $operationId);
 
 		foreach ($controllerPieces as &$controllerPiece)
 		{
@@ -348,12 +373,6 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 
 			throw new \InvalidArgumentException('Endpoint not found', 500);
 		}
-
-		/**
-		 * We only set the controller variable so we knew which controller to boot. We don't want this set into the
-		 * input variable
-		 */
-		unset($routerResult['controller']);
 
 		// Set any remaining variables from the routing into the input object
 		foreach($routerResult as $variableName => $routeValue)
