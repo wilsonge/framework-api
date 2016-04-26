@@ -18,6 +18,7 @@ class PetList extends AbstractController implements LoggerAwareInterface, Contai
 
     public function execute()
     {
+        $this->getApplication()->setBody('I reached the controller - yay');
         // TODO: Implement execute() method.
     }
 }

@@ -10,8 +10,14 @@ use Joomla\Application\AbstractWebApplication;
 use Joomla\Controller\ControllerInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ContainerAwareInterface;
+use Joomla\DI\ContainerAwareTrait;
+use Joomla\Event\DispatcherAwareInterface;
+use Joomla\Event\DispatcherAwareTrait;
+use Joomla\Event\Event;
+use Joomla\Event\EventImmutable;
 use Joomla\Uri\Uri;
 
+use Negotiation\Negotiator;
 use Psr\Log\LoggerAwareInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -26,15 +32,17 @@ use Symfony\Component\Routing\Route;
  *
  * @since  1.0
  */
-final class App extends AbstractWebApplication implements ContainerAwareInterface
+final class App extends AbstractWebApplication implements ContainerAwareInterface, DispatcherAwareInterface
 {
+	use ContainerAwareTrait, DispatcherAwareTrait;
+
 	/**
-	 * DI Container
+	 * The Content Negotiation object
 	 *
-	 * @var    Container
-	 * @since  1.0
+	 * @var   Negotiator|null
+	 * @since 1.0
 	 */
-	protected $container;
+	protected $negotiator = null;
 
 	/**
 	 * Status codes translation table.
@@ -131,6 +139,8 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 
 		$this->setContainer($container);
 		$this->setLogger($container->get('Psr\\Log\\LoggerInterface'));
+		$this->setDispatcher($container->get('Joomla\\Event\\Dispatcher'));
+		$this->negotiator = new Negotiator;
 	}
 
 	/**
@@ -146,14 +156,14 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 		{
 			$routeCollection = $this->initialiseRoutes();
 			$controller      = $this->route($routeCollection);
-			$method          = $this->input->get('method', 'cmd');
+
+			$event = new Event('onBeforeExecuteRoute', array($controller));
+			$this->getDispatcher()->triggerEvent($event);
 
 			$controller->execute();
 
-			if ($this->input->get('format', null, 'word') == 'json')
-			{
-				$this->mimeType = 'application/json';
-			}
+			$event = new EventImmutable('onAfterExecuteRoute', array($controller, $this));
+			$this->getDispatcher()->triggerEvent($event);
 		}
 		catch (\Exception $e)
 		{
@@ -182,13 +192,13 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 		// Instantiate the router
 		$routes = new RouteCollection();
 
-		$swaggerFile = JPATH_CONFIGURATION . '/swagger.json';
+		$swaggerFile = JPATH_CONFIGURATION . '/open-api.json';
 
 		if (!file_exists($swaggerFile))
 		{
-			$this->getLogger()->critical('Swagger routing file could not be found!');
+			$this->getLogger()->critical('Open API routing file could not be found!');
 
-			throw new \RuntimeException('Missing Swagger File', 500);
+			throw new \RuntimeException('Missing Open API File', 500);
 		}
 
 		// Now get the user management routes (these are from the generated swagger json file
@@ -196,9 +206,9 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 
 		if (!$swaggerJson)
 		{
-			$this->getLogger()->critical('Swagger routing file could not be found!');
+			$this->getLogger()->critical('Open API routing file could not be found!');
 
-			throw new \RuntimeException('Invalid Swagger File', 500);
+			throw new \RuntimeException('Invalid Open API File', 500);
 		}
 
 		foreach ($swaggerJson['paths'] as $url => $operations)
@@ -283,7 +293,35 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 		{
 			$this->getLogger()->warning('There was an error in the router', array('exception' => $e));
 
-			throw new \InvalidArgumentException('Endpoint not found', 500, $e);
+			throw new \InvalidArgumentException(self::$statusTexts[500], 500, $e);
+		}
+
+		// Check the accept header matches the expected format for this match
+		$acceptHeader = $this->input->server->getString('HTTP_ACCEPT', null);
+
+		if ($acceptHeader)
+		{
+			// TODO: Get these priorities from the open api file
+			$priorities   = array('application/json');
+
+			$mediaType = $this->negotiator->getBest($acceptHeader, $priorities);
+
+			// If we have a null media type then we couldn't find a matching content type - so the correct result is a 404
+			if (is_null($mediaType))
+			{
+				$this->getLogger()->warning(
+					sprintf(
+						'User supplied accept header of %s, but endpoint only accepts %s',
+						$acceptHeader,
+						implode(',', $priorities)
+					)
+				);
+
+				throw new \InvalidArgumentException(self::$statusTexts[404], 404);
+			}
+
+			/** @var \Negotiation\BaseAccept $mediaType */
+			$value = $mediaType->getValue();
 		}
 
 		// Retrieve the controller path. Try and assemble it into a namespace class to search
@@ -311,8 +349,10 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 			throw new \InvalidArgumentException('Endpoint not found', 500);
 		}
 
-		// We only set the controller variable so we knew which controller to boot. We don't want this set into the
-		// input variable
+		/**
+		 * We only set the controller variable so we knew which controller to boot. We don't want this set into the
+		 * input variable
+		 */
 		unset($routerResult['controller']);
 
 		// Set any remaining variables from the routing into the input object
@@ -336,36 +376,14 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 			$controller->setLogger($this->getLogger());
 		}
 
+		// If the controller is event aware (e.g. because it uses a command bus) set the dispatcher.
+		if ($controller instanceof DispatcherAwareInterface)
+		{
+			$controller->setDispatcher($this->getDispatcher());
+		}
+
 		$this->getLogger()->debug(sprintf('Controller %s was successfully initialised', get_class($controller)));
 
 		return $controller;
-	}
-
-	/**
-	 * Get the DI container.
-	 *
-	 * @return  Container
-	 *
-	 * @since   1.0
-	 */
-	public function getContainer()
-	{
-		return $this->container;
-	}
-
-	/**
-	 * Set the DI container.
-	 *
-	 * @param   Container  $container  The DI container.
-	 *
-	 * @return  $this  Method allows chaining
-	 *
-	 * @since   1.0
-	 */
-	public function setContainer(Container $container)
-	{
-		$this->container = $container;
-
-		return $this;
 	}
 }

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0cd8ac187879ab8e353c409ca38bb577",
-    "content-hash": "444913c1286b4140f0f2e912bb9ab070",
+    "hash": "4246067697bd9e73425cd1b5bff3693b",
+    "content-hash": "a4ad935ea9f6383044c28a08de805889",
     "packages": [
         {
             "name": "joomla/application",
@@ -198,6 +198,52 @@
                 "joomla"
             ],
             "time": "2015-04-02 16:30:40"
+        },
+        {
+            "name": "joomla/event",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joomla-framework/event.git",
+                "reference": "d8cc2a4757c4556f0ab12e58903e9d168077018b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joomla-framework/event/zipball/d8cc2a4757c4556f0ab12e58903e9d168077018b",
+                "reference": "d8cc2a4757c4556f0ab12e58903e9d168077018b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.10|>=7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8|~5.0",
+                "squizlabs/php_codesniffer": "1.*"
+            },
+            "type": "joomla-package",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Joomla\\Event\\": "src/",
+                    "Joomla\\Event\\Tests\\": "Tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Joomla Event Package",
+            "homepage": "https://github.com/joomla-framework/event",
+            "keywords": [
+                "event",
+                "framework",
+                "joomla"
+            ],
+            "time": "2016-03-13 19:41:09"
         },
         {
             "name": "joomla/filesystem",
@@ -395,60 +441,6 @@
                 "registry"
             ],
             "time": "2016-04-18 23:57:43"
-        },
-        {
-            "name": "joomla/renderer",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/joomla-framework/renderer.git",
-                "reference": "d697e8049c3de01630364dd3f738b08628129432"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/joomla-framework/renderer/zipball/d697e8049c3de01630364dd3f738b08628129432",
-                "reference": "d697e8049c3de01630364dd3f738b08628129432",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.10|>=7.0"
-            },
-            "require-dev": {
-                "league/plates": "~2.0|~3.0",
-                "mustache/mustache": "~2.0",
-                "squizlabs/php_codesniffer": "1.*",
-                "symfony/templating": "~2.0|~3.0",
-                "twig/twig": "~1.0|~2.0"
-            },
-            "suggest": {
-                "league/plates": "Install ~2.0|~3.0 if you are using the Plates template engine.",
-                "mustache/mustache": "Install ~2.0 if you are using the Mustache template engine.",
-                "symfony/templating": "Install ~2.0|~3.0 if you are using Symfony's PHP template component.",
-                "twig/twig": "Install ~1.0|~2.0 if you are using the Twig template engine."
-            },
-            "type": "joomla-package",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Joomla\\Renderer\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL-2.1+"
-            ],
-            "description": "Joomla Renderer Package",
-            "homepage": "https://github.com/joomla-framework/renderer",
-            "keywords": [
-                "framework",
-                "joomla",
-                "renderer"
-            ],
-            "time": "2016-01-30 19:25:55"
         },
         {
             "name": "joomla/string",
@@ -836,6 +828,55 @@
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
             "time": "2016-03-04 07:55:57"
+        },
+        {
+            "name": "willdurand/negotiation",
+            "version": "v2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/willdurand/Negotiation.git",
+                "reference": "a8ce6da7acdf07351ccd6a9359c571ebc0725a21"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/willdurand/Negotiation/zipball/a8ce6da7acdf07351ccd6a9359c571ebc0725a21",
+                "reference": "a8ce6da7acdf07351ccd6a9359c571ebc0725a21",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Negotiation\\": "src/Negotiation"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Durand",
+                    "email": "will+git@drnd.me"
+                }
+            ],
+            "description": "Content Negotiation tools for PHP provided as a standalone library.",
+            "homepage": "http://williamdurand.fr/Negotiation/",
+            "keywords": [
+                "accept",
+                "content",
+                "format",
+                "header",
+                "negotiation"
+            ],
+            "time": "2015-11-21 14:23:02"
         }
     ],
     "packages-dev": [
@@ -1323,9 +1364,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "joomla/renderer": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
