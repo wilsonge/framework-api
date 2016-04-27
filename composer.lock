@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4246067697bd9e73425cd1b5bff3693b",
-    "content-hash": "a4ad935ea9f6383044c28a08de805889",
+    "hash": "08b0e9fab55461534cf6c56c461714ff",
+    "content-hash": "2f3118f9e962019289bb11906a6d7ba2",
     "packages": [
         {
             "name": "joomla/application",
@@ -391,6 +391,58 @@
             "time": "2014-10-12 18:01:36"
         },
         {
+            "name": "joomla/model",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joomla-framework/model.git",
+                "reference": "900c54801904bf0fa594b5d78def01d764fb4281"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joomla-framework/model/zipball/900c54801904bf0fa594b5d78def01d764fb4281",
+                "reference": "900c54801904bf0fa594b5d78def01d764fb4281",
+                "shasum": ""
+            },
+            "require": {
+                "joomla/registry": "~1.0",
+                "php": ">=5.3.10"
+            },
+            "require-dev": {
+                "joomla/database": "~1.0",
+                "joomla/test": "~1.0",
+                "phpunit/phpunit": "4.*",
+                "squizlabs/php_codesniffer": "1.*"
+            },
+            "suggest": {
+                "joomla/database": "Allows using database models"
+            },
+            "type": "joomla-package",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Joomla\\Model\\": "src/",
+                    "Joomla\\Model\\Tests\\": "Tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Joomla Model Package",
+            "homepage": "https://github.com/joomla-framework/model",
+            "keywords": [
+                "framework",
+                "joomla",
+                "model"
+            ],
+            "time": "2014-11-03 16:43:46"
+        },
+        {
             "name": "joomla/registry",
             "version": "1.5.1",
             "source": {
@@ -441,6 +493,60 @@
                 "registry"
             ],
             "time": "2016-04-18 23:57:43"
+        },
+        {
+            "name": "joomla/renderer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joomla-framework/renderer.git",
+                "reference": "d697e8049c3de01630364dd3f738b08628129432"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joomla-framework/renderer/zipball/d697e8049c3de01630364dd3f738b08628129432",
+                "reference": "d697e8049c3de01630364dd3f738b08628129432",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.10|>=7.0"
+            },
+            "require-dev": {
+                "league/plates": "~2.0|~3.0",
+                "mustache/mustache": "~2.0",
+                "squizlabs/php_codesniffer": "1.*",
+                "symfony/templating": "~2.0|~3.0",
+                "twig/twig": "~1.0|~2.0"
+            },
+            "suggest": {
+                "league/plates": "Install ~2.0|~3.0 if you are using the Plates template engine.",
+                "mustache/mustache": "Install ~2.0 if you are using the Mustache template engine.",
+                "symfony/templating": "Install ~2.0|~3.0 if you are using Symfony's PHP template component.",
+                "twig/twig": "Install ~1.0|~2.0 if you are using the Twig template engine."
+            },
+            "type": "joomla-package",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Joomla\\Renderer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1+"
+            ],
+            "description": "Joomla Renderer Package",
+            "homepage": "https://github.com/joomla-framework/renderer",
+            "keywords": [
+                "framework",
+                "joomla",
+                "renderer"
+            ],
+            "time": "2016-01-30 19:25:55"
         },
         {
             "name": "joomla/string",
@@ -589,6 +695,55 @@
                 "utilities"
             ],
             "time": "2015-09-05 16:41:24"
+        },
+        {
+            "name": "joomla/view",
+            "version": "dev-2.0-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joomla-framework/view.git",
+                "reference": "2b84eb6c6ccf965c06eb6935a63eea1f35900934"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joomla-framework/view/zipball/2b84eb6c6ccf965c06eb6935a63eea1f35900934",
+                "reference": "2b84eb6c6ccf965c06eb6935a63eea1f35900934",
+                "shasum": ""
+            },
+            "require": {
+                "joomla/model": "~1.0|~2.0@dev",
+                "joomla/renderer": "~2.0@dev",
+                "php": ">=5.3.10|>=7.0"
+            },
+            "require-dev": {
+                "joomla/test": "~1.0",
+                "phpunit/phpunit": "~4.8|~5.0",
+                "squizlabs/php_codesniffer": "1.*"
+            },
+            "type": "joomla-package",
+            "extra": {
+                "branch-alias": {
+                    "dev-2.0-dev": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Joomla\\View\\": "src/",
+                    "Joomla\\View\\Tests\\": "Tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Joomla View Package",
+            "homepage": "https://github.com/joomla-framework/view",
+            "keywords": [
+                "framework",
+                "joomla",
+                "view"
+            ],
+            "time": "2016-01-30 21:05:54"
         },
         {
             "name": "monolog/monolog",
@@ -1364,7 +1519,10 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "joomla/renderer": 20,
+        "joomla/view": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

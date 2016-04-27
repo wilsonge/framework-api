@@ -11,16 +11,17 @@ use Joomla\DI\ServiceProviderInterface;
 use Joomla\Registry\Registry;
 
 /**
- * Configuration service provider
+ * Configuration service provider.
  *
  * @since  1.0
  */
 class ConfigProvider implements ServiceProviderInterface
 {
 	/**
-	 * Configuration object
+	 * Configuration object.
 	 *
 	 * @var    Registry
+	 *
 	 * @since  1.0
 	 */
 	protected $config;
@@ -28,10 +29,11 @@ class ConfigProvider implements ServiceProviderInterface
 	/**
 	 * Class constructor.
 	 *
-	 * @param   string  $path  Path to the config file.
+	 * @param string $path Path to the config file.
 	 *
 	 * @since   1.0
-	 * @throws  \RuntimeException
+	 *
+	 * @throws \RuntimeException
 	 */
 	public function __construct($path)
 	{

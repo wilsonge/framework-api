@@ -15,7 +15,7 @@ use Monolog\Handler\SyslogHandler;
 use Monolog\Formatter\LineFormatter;
 
 /**
- * Logging service provider
+ * Logging service provider.
  *
  * @since  1.0
  */

@@ -11,7 +11,7 @@ use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\Dispatcher;
 
 /**
- * Logging service provider
+ * Logging service provider.
  *
  * @since  1.0
  */

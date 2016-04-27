@@ -16,7 +16,6 @@ use Joomla\Event\DispatcherAwareTrait;
 use Joomla\Event\Event;
 use Joomla\Event\EventImmutable;
 use Joomla\Uri\Uri;
-
 use Negotiation\Negotiator;
 use Psr\Log\LoggerAwareInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -28,7 +27,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 
 /**
- * Application class
+ * Application class.
  *
  * @since  1.0
  */
@@ -37,17 +36,19 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 	use ContainerAwareTrait, DispatcherAwareTrait;
 
 	/**
-	 * The default content types for the Open API routes
+	 * The default content types for the Open API routes.
 	 *
-	 * @var    array
+	 * @var array
+	 *
 	 * @since  1.0
 	 */
 	protected $defaultContentType = null;
 
 	/**
-	 * Mapping of Open API paths to the produced content type as an array
+	 * Mapping of Open API paths to the produced content type as an array.
 	 *
-	 * @var    array
+	 * @var array
+	 *
 	 * @since  1.0
 	 */
 	protected $contentTypeMapping = null;
@@ -185,12 +186,26 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 
 			header('HTTP/1.1 ' . $code . ' ' . $reason, true, $code);
 
-			$this->setBody($e->getMessage());
+			if ($this->mimeType === 'application/json')
+			{
+				$this->setBody(
+					json_encode(
+						array(
+							'error' => $reason,
+							'error_description' => $e->getMessage(),
+						)
+					)
+				);
+			}
+			else
+			{
+				$this->setBody($e->getMessage());
+			}
 		}
 	}
 
 	/**
-	 * Creates a list of potential routes
+	 * Creates a list of potential routes.
 	 *
 	 * @return RouteCollection
 	 */
@@ -205,7 +220,7 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 		{
 			$this->getLogger()->critical('Open API routing file could not be found!');
 
-			throw new \RuntimeException('Missing Open API File', 500);
+			throw new \RuntimeException(self::$statusTexts[500], 500);
 		}
 
 		// Now get the user management routes (these are from the generated swagger json file
@@ -215,7 +230,7 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 		{
 			$this->getLogger()->critical('Open API routing file could not be found!');
 
-			throw new \RuntimeException('Invalid Open API File', 500);
+			throw new \RuntimeException(self::$statusTexts[500], 500);
 		}
 
 		$this->defaultContentType = $swaggerJson['produces'];
@@ -234,7 +249,7 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 					new Route(
 						$swaggerJson['basePath'] . $url,
 						array(
-							'controller' => $operation['operationId']
+							'controller' => $operation['operationId'],
 						),
 						array(),
 						array(),
@@ -250,7 +265,7 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 	}
 
 	/**
-	 * Maps the route to a controller
+	 * Maps the route to a controller.
 	 *
 	 * @param   RouteCollection  $routeCollection  The potential routes
 	 *
@@ -346,7 +361,7 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 			}
 
 			// First of all we set the media type with a utf-8 charset (default). Then we try and find a charset match
-			/** @var \Negotiation\BaseAccept $mediaType */
+			/* @var \Negotiation\BaseAccept $mediaType */
 			$this->mimeType = $mediaType->getType();
 		}
 
@@ -364,18 +379,18 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 		{
 			$this->getLogger()->critical('The controller cannot be found!');
 
-			throw new \InvalidArgumentException('Endpoint not found', 500);
+			throw new \InvalidArgumentException(self::$statusTexts[500], 500);
 		}
 
 		if (!is_subclass_of($controllerClassName, '\\Joomla\\Controller\\AbstractController'))
 		{
 			$this->getLogger()->warning('The controller is not a Joomla Abstract Controller instance!');
 
-			throw new \InvalidArgumentException('Endpoint not found', 500);
+			throw new \InvalidArgumentException(self::$statusTexts[500], 500);
 		}
 
 		// Set any remaining variables from the routing into the input object
-		foreach($routerResult as $variableName => $routeValue)
+		foreach ($routerResult as $variableName => $routeValue)
 		{
 			$this->input->set($variableName, $routeValue);
 		}

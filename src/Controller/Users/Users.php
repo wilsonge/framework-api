@@ -4,7 +4,7 @@
  * @license    GNU General Public License version 3 or later; see LICENSE.txt
  */
 
-namespace Wilsonge\Api\Controller\Pets;
+namespace Wilsonge\Api\Controller\Users;
 
 use Joomla\Controller\AbstractController;
 use Joomla\DI\ContainerAwareInterface;
@@ -12,12 +12,15 @@ use Joomla\DI\ContainerAwareTrait;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
-class PetList extends AbstractController implements LoggerAwareInterface, ContainerAwareInterface
+class Users extends AbstractController implements LoggerAwareInterface, ContainerAwareInterface
 {
-    use ContainerAwareTrait, LoggerAwareTrait;
+	use ContainerAwareTrait, LoggerAwareTrait;
 
-    public function execute()
-    {
-        // TODO: Implement execute() method.
-    }
+	public function execute()
+	{
+		$page = $this->getInput()->get('page');
+		$size = $this->getInput()->get('size');
+
+		// TODO: Implement execute() method.
+	}
 }
