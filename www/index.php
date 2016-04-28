@@ -17,6 +17,7 @@ require JPATH_ROOT . '/vendor/autoload.php';
 $container = new \Joomla\DI\Container;
 $container->registerServiceProvider(new \Wilsonge\Api\Service\ConfigProvider(JPATH_CONFIGURATION . '/config.json'))
 	->registerServiceProvider(new \Wilsonge\Api\Service\LoggingProvider)
+	->registerServiceProvider(new \Wilsonge\Api\Service\DatabaseProvider)
 	->registerServiceProvider(new \Wilsonge\Api\Service\EventProvider);
 
 // Instantiate the application.

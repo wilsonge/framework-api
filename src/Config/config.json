@@ -1,4 +1,11 @@
 {
-	"gzip"      : "0",
-	"errorReporting"    : -1
+	"gzip" : "0",
+	"errorReporting" : -1,
+	"database": {
+		"name": "user_database",
+		"host": "localhost",
+		"user": "root",
+		"password": "",
+		"driver": "mysqli"
+	}
 }

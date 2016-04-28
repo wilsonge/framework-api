@@ -25,6 +25,8 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
+use Wilsonge\Api\Exception\RouteNotFoundException;
+use Wilsonge\Api\Exception\UnsupportedControllerException;
 
 /**
  * Application class.
@@ -52,6 +54,12 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 	 * @since  1.0
 	 */
 	protected $contentTypeMapping = null;
+
+	protected $formatMapping = array(
+		'application/json' => 'json',
+		'text/html'        => 'html',
+		'application/xml'  => 'xml',
+	);
 
 	/**
 	 * Status codes translation table.
@@ -113,6 +121,7 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 		428 => 'Precondition Required',                                       // RFC6585
 		429 => 'Too Many Requests',                                           // RFC6585
 		431 => 'Request Header Fields Too Large',                             // RFC6585
+		451 => 'Unavailable for Legal Reasons',                               // RFC7725
 		500 => 'Internal Server Error',
 		501 => 'Not Implemented',
 		502 => 'Bad Gateway',
@@ -301,7 +310,7 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 		}
 		catch (ResourceNotFoundException $e)
 		{
-			throw new \InvalidArgumentException(self::$statusTexts[404], 404, $e);
+			throw new RouteNotFoundException(self::$statusTexts[404], 404, $e);
 		}
 		catch (MethodNotAllowedException $e)
 		{
@@ -314,13 +323,13 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 				array('exception' => $e)
 			);
 
-			throw new \InvalidArgumentException(self::$statusTexts[405], 405, $e);
+			throw new RouteNotFoundException(self::$statusTexts[405], 405, $e);
 		}
 		catch (\Exception $e)
 		{
 			$this->getLogger()->warning('There was an error in the router', array('exception' => $e));
 
-			throw new \InvalidArgumentException(self::$statusTexts[500], 500, $e);
+			throw new \RuntimeException(self::$statusTexts[500], 500, $e);
 		}
 
 		$operationId = $routerResult['controller'];
@@ -357,12 +366,18 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 					)
 				);
 
-				throw new \InvalidArgumentException(self::$statusTexts[404], 404);
+				throw new RouteNotFoundException(self::$statusTexts[404], 404);
 			}
 
 			// First of all we set the media type with a utf-8 charset (default). Then we try and find a charset match
 			/* @var \Negotiation\BaseAccept $mediaType */
-			$this->mimeType = $mediaType->getType();
+			$type = $mediaType->getType();
+			$this->mimeType = $type;
+
+			if (isset($this->formatMapping[$type]))
+			{
+				$routerResult['format'] = $this->formatMapping[$type];
+			}
 		}
 
 		// Retrieve the controller path. Try and assemble it into a namespace class to search
@@ -379,14 +394,14 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 		{
 			$this->getLogger()->critical('The controller cannot be found!');
 
-			throw new \InvalidArgumentException(self::$statusTexts[500], 500);
+			throw new UnsupportedControllerException(self::$statusTexts[500], 500);
 		}
 
 		if (!is_subclass_of($controllerClassName, '\\Joomla\\Controller\\AbstractController'))
 		{
 			$this->getLogger()->warning('The controller is not a Joomla Abstract Controller instance!');
 
-			throw new \InvalidArgumentException(self::$statusTexts[500], 500);
+			throw new UnsupportedControllerException(self::$statusTexts[500], 500);
 		}
 
 		// Set any remaining variables from the routing into the input object

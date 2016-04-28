@@ -6,11 +6,13 @@
 
 namespace Wilsonge\Api\Controller\Users;
 
-use Joomla\Controller\AbstractController;
 use Joomla\DI\ContainerAwareInterface;
 use Joomla\DI\ContainerAwareTrait;
+use Joomla\Model\AbstractDatabaseModel;
+use Joomla\View\AbstractView;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Wilsonge\Api\Controller\AbstractController;
 
 class Users extends AbstractController implements LoggerAwareInterface, ContainerAwareInterface
 {
@@ -21,6 +23,10 @@ class Users extends AbstractController implements LoggerAwareInterface, Containe
 		$page = $this->getInput()->get('page');
 		$size = $this->getInput()->get('size');
 
-		// TODO: Implement execute() method.
+		/** @var AbstractDatabaseModel $model */
+		$model = $this->initialiseModel($this->getControllerNameExtractor()->extract($this));
+
+		/** @var AbstractView $view */
+		$view = $this->initialiseView();
 	}
 }
