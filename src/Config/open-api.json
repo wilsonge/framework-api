@@ -87,8 +87,10 @@
             ],
             "properties": {
                 "data": {
-                    "type": "object",
-                    "$ref": "#/definitions/User"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/User"
+                    }
                 },
                 "links": {
                     "type": "array",
