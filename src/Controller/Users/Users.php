@@ -7,7 +7,6 @@
 namespace Wilsonge\Api\Controller\Users;
 
 use Wilsonge\Api\Controller\AbstractListController;
-use Joomla\Model\ModelInterface;
 
 class Users extends AbstractListController
 {
