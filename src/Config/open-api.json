@@ -25,13 +25,33 @@
     "paths": {
         "/users": {
             "get": {
-                "description": "Returns all pets from the system that the user has access to",
-                "operationId": "wilsonge.api.controller.users.users",
+                "description": "Returns all users",
+                "operationId": "wilsonge.api.controller.users.userList",
                 "responses": {
                     "200": {
                         "description": "A list of users.",
                         "schema": {
                             "$ref": "#/definitions/UserPagination"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Service Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{id}": {
+            "get": {
+                "description": "Returns a single user from the system",
+                "operationId": "wilsonge.api.controller.users.userItem",
+                "responses": {
+                    "200": {
+                        "description": "Return a single user.",
+                        "schema": {
+                            "$ref": "#/definitions/UserItem"
                         }
                     },
                     "500": {
@@ -60,6 +80,25 @@
             }
         },
         "UserPagination": {
+            "type": "object",
+            "required": [
+                "data",
+                "links"
+            ],
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "$ref": "#/definitions/User"
+                },
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "UserItem": {
             "type": "object",
             "required": [
                 "data",
@@ -114,10 +153,18 @@
         "UserAttributes": {
             "type": "object",
             "required": [
-                "username"
+                "username",
+                "first_name",
+                "last_name"
             ],
             "properties": {
                 "username": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
                     "type": "string"
                 }
             }

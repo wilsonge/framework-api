@@ -8,7 +8,7 @@ namespace Wilsonge\Api\Model;
 
 use Joomla\Model\AbstractDatabaseModel;
 
-class UsersModel extends AbstractDatabaseModel implements ListModel
+class UsersModel extends AbstractDatabaseModel implements ListModel, ItemModel
 {
     public function getTotal()
     {
@@ -39,5 +39,24 @@ class UsersModel extends AbstractDatabaseModel implements ListModel
         $db->setQuery($query, ((int) $page * (int) $size), (int) $size);
 
         return $db->loadAssocList();
+    }
+
+    /**
+     * Gets a list of users
+     *
+     * @param   integer  $id  The id of the item
+     *
+     * @return array
+     */
+    public function getItem($id)
+    {
+        $db = $this->getDb();
+        $query = $db->getQuery(true);
+        $query->select('*')
+            ->from($db->quoteName('#__users'))
+            ->where($db->quoteName('id') . ' = ' . (int) $id);
+        $db->setQuery($query);
+
+        return $db->loadAssoc();
     }
 }

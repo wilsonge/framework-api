@@ -26,6 +26,13 @@ abstract class AbstractController extends AbstractJoomlaController implements Lo
     protected $controllerNameExtractor;
 
     /**
+     * The controller name extractor
+     *
+     * @var  ControllerNameExtractor
+     */
+    protected $userModel;
+
+    /**
      * Method to initialise the model object
      *
      * @param   string  $mName  The name of the model to initialise (usually the same as the view)

@@ -64,7 +64,14 @@ abstract class AbstractListController extends AbstractController implements Logg
 		}
 
 		/** @var AbstractDatabaseModel $model */
-		$model = $this->initialiseModel($this->getControllerNameExtractor()->extract($this));
+		if ($this->userModel)
+		{
+			$model = $this->initialiseModel($this->userModel);
+		}
+		else
+		{
+			$model = $this->initialiseModel($this->getControllerNameExtractor()->extract($this));
+		}
 
 		/** @var AbstractView $view */
 		$view = $this->initialiseView();

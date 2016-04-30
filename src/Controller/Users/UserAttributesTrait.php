@@ -6,17 +6,25 @@
 
 namespace Wilsonge\Api\Controller\Users;
 
-use Wilsonge\Api\Controller\AbstractListController;
+use Joomla\Application\AbstractApplication;
+use Joomla\Input\Input;
 
-class Users extends AbstractListController
+trait UserAttributesTrait
 {
     /**
-     * The type of the documents being rendered
+     * Instantiate the controller.
      *
-     * @var    string
+     * @param   Input                $input  The input object.
+     * @param   AbstractApplication  $app    The application object.
+     *
      * @since  1.0
      */
-    protected $type = 'users';
+    public function __construct(Input $input = null, AbstractApplication $app = null)
+    {
+        $this->type = 'users';
+        $this->userModel = 'Users';
+        parent::__construct($input, $app);
+    }
 
     public function addAttributes(array $item)
     {
