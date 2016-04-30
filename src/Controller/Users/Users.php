@@ -19,7 +19,12 @@ class Users extends AbstractListController
      */
     protected $type = 'users';
 
-    public function addAttributes(array $item, array $attributes)
+    public function addAttributes(array $item)
     {
+        $attributes['username'] = $item['username'];
+        $attributes['first_name'] = $item['first_name'];
+        $attributes['last_name'] = $item['last_name'];
+
+        return $attributes;
     }
 }

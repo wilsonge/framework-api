@@ -18,8 +18,8 @@ class UsersModel extends AbstractDatabaseModel implements ListModel
             ->from($db->quoteName('#__users'));
 
         $db->setQuery($query);
-        $db->execute();
-        return (int) $db->getNumRows();
+
+        return (int) $db->loadResult();
     }
 
     /**
@@ -38,6 +38,6 @@ class UsersModel extends AbstractDatabaseModel implements ListModel
             ->from($db->quoteName('#__users'));
         $db->setQuery($query, ((int) $page * (int) $size), (int) $size);
 
-        return $db->loadAssoc();
+        return $db->loadAssocList();
     }
 }
