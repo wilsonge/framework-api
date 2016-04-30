@@ -11,7 +11,7 @@ use Joomla\DI\ServiceProviderInterface;
 use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\ProcessIdProcessor;
-use Monolog\Handler\SyslogHandler;
+use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\LineFormatter;
 
 /**
@@ -35,8 +35,8 @@ class LoggingProvider implements ServiceProviderInterface
 				$log->pushProcessor(new ProcessIdProcessor);
 
 				// Initialise the syslog handler and formatter and inject it into the logger
-				$sysLog = new SyslogHandler('php');
-				$formatter = new LineFormatter('%datetime% %level_name% %extra.file%:%extra.line% %extra.class%: %message% %context%', 'Y-m-d H:i:s,u');
+				$sysLog = new StreamHandler(JPATH_ROOT . '/debug.log');
+				$formatter = new LineFormatter("%datetime% %level_name% %extra.file%:%extra.line% %extra.class%: %message% %context%\n", 'Y-m-d H:i:s,u');
 				$formatter->includeStacktraces(true);
 				$formatter->ignoreEmptyContextAndExtra(true);
 				$sysLog->setFormatter($formatter);

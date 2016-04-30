@@ -39,15 +39,28 @@ class DatabaseProvider implements ServiceProviderInterface
 				$config = $container->get('config');
 
 				$factory = new DatabaseFactory;
-				return $factory->getDriver(
+				$db = $factory->getDriver(
 					$config->get('database.driver'),
 					array(
 						'host'     => $config->get('database.host'),
 						'user'     => $config->get('database.user'),
 						'password' => $config->get('database.password'),
-						'database' => $config->get('database.name')
+						'database' => $config->get('database.name'),
+						'prefix'   => $config->get('database.prefix'),
 					)
 				);
+				$db->setDebug(true);
+
+				try
+				{
+					$db->setLogger($container->get('Psr\\Log\\LoggerInterface'));
+				}
+				catch (\InvalidArgumentException $e)
+				{
+					// If we can't find a logger then just skip over it - it's not a show stopper.
+				}
+
+				return $db;
 			}
 		);
 

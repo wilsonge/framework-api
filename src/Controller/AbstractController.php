@@ -62,7 +62,12 @@ abstract class AbstractController extends AbstractJoomlaController implements Lo
     protected function initialiseView()
     {
         $view   = ucfirst(strtolower($this->getControllerNameExtractor()->extract($this)));
-        $format = ucfirst($this->getInput()->getWord('format', 'html'));
+        $format = ucfirst($this->getInput()->getWord('format'));
+
+        if (is_null($format))
+        {
+            throw new \LogicException('Invalid Format', 500);
+        }
 
         // See if we have already initialised the model - if we haven't then initialise it
         try

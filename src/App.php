@@ -57,6 +57,7 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 
 	protected $formatMapping = array(
 		'application/json' => 'json',
+		'application/vnd.api+json' => 'json',
 		'text/html'        => 'html',
 		'application/xml'  => 'xml',
 	);
@@ -374,10 +375,21 @@ final class App extends AbstractWebApplication implements ContainerAwareInterfac
 			$type = $mediaType->getType();
 			$this->mimeType = $type;
 
-			if (isset($this->formatMapping[$type]))
+			// TODO: Make this event based?
+			if (!isset($this->formatMapping[$type]))
 			{
-				$routerResult['format'] = $this->formatMapping[$type];
+				$this->getLogger()->warning(
+					sprintf(
+						'The type in the swagger.json file of %s was not recognized',
+						$acceptHeader,
+						implode(',', $priorities)
+					)
+				);
+
+				throw new RouteNotFoundException(self::$statusTexts[500], 500);
 			}
+
+			$routerResult['format'] = $this->formatMapping[$type];
 		}
 
 		// Retrieve the controller path. Try and assemble it into a namespace class to search

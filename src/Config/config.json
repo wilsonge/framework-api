@@ -6,6 +6,7 @@
 		"host": "localhost",
 		"user": "root",
 		"password": "",
-		"driver": "mysqli"
+		"driver": "mysqli",
+		"prefix": "jos_"
 	}
 }
