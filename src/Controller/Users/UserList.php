@@ -6,9 +6,9 @@
 
 namespace Wilsonge\Api\Controller\Users;
 
-use Wilsonge\Api\Controller\AbstractListController;
+use Wilsonge\Api\Controller\AbstractItemController;
 
-class UserList extends AbstractListController
+class UserList extends AbstractItemController
 {
     use UserAttributesTrait;
 }

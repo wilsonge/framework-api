@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "version": "1.0.0",
-        "title": "Swagger Petstore",
+        "title": "User Management",
         "description": "A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification",
         "contact": {
             "name": "George Wilson"
@@ -34,6 +34,12 @@
                             "$ref": "#/definitions/UserPagination"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
                     "500": {
                         "description": "Internal Service Error",
                         "schema": {
@@ -52,6 +58,36 @@
                         "description": "Return a single user.",
                         "schema": {
                             "$ref": "#/definitions/UserItem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Service Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Updates the information associated with a user",
+                "operationId": "wilsonge.api.controller.users.userUpdate",
+                "responses": {
+                    "200": {
+                        "description": "The updated user object.",
+                        "schema": {
+                            "$ref": "#/definitions/UserItem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
                         }
                     },
                     "500": {
